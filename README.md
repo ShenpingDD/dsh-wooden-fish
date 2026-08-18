@@ -19,6 +19,12 @@
 
 > ⚠️ v1 has no knock **sound** (the installed-plugin client runs in the browser; audio was out of scope). Feedback is visual only.
 
+## 📸 Preview
+
+![UI design preview](docs/screenshots/ui-design-preview.png)
+
+Interactive demo: [docs/wooden-fish-preview.html](docs/wooden-fish-preview.html) (open in a browser — drag and knock the fish, switch the chart range)
+
 ## 📦 Install
 
 The plugin is an installable **web-profile bundle** package. From the DeepSeek Harness checkout:

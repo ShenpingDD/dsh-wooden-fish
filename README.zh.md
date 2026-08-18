@@ -19,6 +19,12 @@
 
 > ⚠️ v1 无敲击音效（安装版插件运行在浏览器端，音频不在本版范围），反馈以视觉为主。
 
+## 📸 界面预览
+
+![UI 设计预览](docs/screenshots/ui-design-preview.png)
+
+交互演示：[docs/wooden-fish-preview.html](docs/wooden-fish-preview.html)（浏览器打开——可拖动、敲击木鱼、切换趋势图范围）
+
 ## 📦 安装
 
 本插件是可直接安装的 **web profile bundle 包**。在 DeepSeek Harness 检出目录执行：
