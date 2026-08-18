@@ -1,0 +1,4 @@
+# 电子木鱼：把本插件插入 web profile 的组合层。
+- insert:
+    - id: wooden-fish-dsh
+      name: wooden-fish-dsh

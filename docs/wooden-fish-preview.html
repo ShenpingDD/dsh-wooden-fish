@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电子木鱼 · UI 预览（禅意木质风）</title>
+<style>
+  :root{
+    --paper:#F7F2EA; --card:#FDFAF4; --ink:#4A3520; --muted:rgba(74,53,32,.62);
+    --line:rgba(120,90,60,.22); --chip:rgba(139,100,60,.10);
+    --accent:#C98A3B; --accent-hi:#E8A75A; --shadow:0 6px 18px rgba(80,50,20,.16);
+    --bar-zero:rgba(120,90,60,.22); --pill-bg:rgba(40,25,10,.55);
+  }
+  html.dark{
+    --paper:#201C17; --card:#2A241D; --ink:#EADDC8; --muted:rgba(234,221,200,.58);
+    --line:rgba(200,160,110,.20); --chip:rgba(200,160,110,.08);
+    --accent:#E8A75A; --accent-hi:#F2BC7A; --shadow:0 6px 20px rgba(0,0,0,.45);
+    --bar-zero:rgba(200,160,110,.16); --pill-bg:rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);transition:background .25s,color .25s;padding:36px 24px 80px}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:22px;letter-spacing:1px}
+  .sub{font-size:13px;color:var(--muted);margin-top:6px}
+  .toolbar{display:flex;align-items:center;gap:12px;margin:18px 0 8px}
+  .theme-btn{cursor:pointer;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:12px}
+  .theme-btn:hover{border-color:var(--accent)}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:20px;box-shadow:var(--shadow);position:relative}
+  .section>h2{font-size:15px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+  .section>h2 .tag{font-size:11px;font-weight:400;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:1px 8px}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  .footnote{font-size:12px;color:var(--muted);margin-top:14px}
+
+  /* ---------- 悬浮木鱼 demo ---------- */
+  #demoFish{position:fixed;right:26px;bottom:150px;z-index:50;cursor:pointer;user-select:none;touch-action:none;
+    filter:drop-shadow(0 6px 14px rgba(80,50,20,.30))}
+  #demoFish svg{display:block;width:96px;height:auto;transition:transform .15s ease}
+  #demoFish:hover svg{transform:translateY(-2px)}
+  #demoFish .pop{position:absolute;left:78%;top:2%;font-size:17px;font-weight:700;color:#E8A75A;text-shadow:0 1px 2px rgba(0,0,0,.35);pointer-events:none;animation:popUp .9s ease-out forwards}
+  #demoFish .ripple{position:absolute;left:50%;top:6px;width:14px;height:14px;margin-left:-7px;border:2px solid rgba(217,154,61,.75);border-radius:50%;pointer-events:none;animation:ripple .6s ease-out forwards}
+  #demoFish.knock svg{animation:shake .18s ease}
+  #demoFish.knock .mallet{transform:rotate(-38deg)}
+  .mallet{transform-box:fill-box;transform-origin:50% 90%;transition:transform .12s ease}
+  .hover-tip{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) translateY(4px);background:var(--pill-bg);color:#FFD58A;font-size:12px;line-height:1;padding:6px 11px;border-radius:999px;white-space:nowrap;letter-spacing:.5px;opacity:0;pointer-events:none;transition:opacity .15s ease,transform .15s ease;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  .hover-tip::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--pill-bg)}
+  #demoFish:hover .hover-tip{opacity:1;transform:translateX(-50%) translateY(0)}
+  #demoFish.dragging .hover-tip{opacity:0 !important;transform:translateX(-50%) translateY(4px) !important}
+  .hover-tip b{display:inline-block;animation:bounce .2s cubic-bezier(.34,1.56,.64,1)}
+  .hidden-note{margin-top:10px;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:10px 14px}
+
+  /* ---------- 设置页看板 mockup ---------- */
+  .mini-fish{cursor:pointer;filter:drop-shadow(0 3px 8px rgba(80,50,20,.25));position:relative;display:inline-block}
+  .mini-fish svg{display:block;width:72px;height:auto;transition:transform .15s ease}
+  .mini-fish:hover svg{transform:translateY(-1px)}
+  .mini-fish .pop{position:absolute;left:75%;top:0;font-size:14px;font-weight:700;color:#E8A75A;pointer-events:none;animation:popUp .9s ease-out forwards}
+  .mini-fish.knock svg{animation:shake .18s ease}
+  .mini-fish.knock .mallet{transform:rotate(-38deg)}
+  .page-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .page-title{font-size:15px;font-weight:600}
+  .page-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .cards{display:flex;gap:10px;flex-wrap:wrap}
+  .card{flex:1;min-width:110px;background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .card .v{font-size:24px;font-weight:700;color:var(--accent);line-height:1.2}
+  .card .v b{display:inline-block;animation:bounce .2s cubic-bezier(.34,1.56,.64,1)}
+  .card .k{font-size:12px;color:var(--muted);margin-top:3px}
+  .range{display:flex;gap:6px;margin:16px 0 10px}
+  .range button{cursor:pointer;background:var(--chip);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 12px;font-size:12px}
+  .range button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .chart-box{display:flex;flex-direction:column}
+  .chart{display:flex;align-items:flex-end;gap:3px;height:130px;padding:8px 2px 0;border-bottom:1px solid var(--line)}
+  .bar{flex:1;min-width:4px;border-radius:3px 3px 0 0;background:var(--accent);position:relative;cursor:default;transition:background .15s}
+  .bar:hover{background:var(--accent-hi)}
+  .bar.zero{background:var(--bar-zero)}
+  .bar.today{outline:2px solid var(--accent-hi);outline-offset:1px}
+  .bar::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);background:rgba(30,20,8,.85);color:#FFE7C2;font-size:11px;padding:3px 7px;border-radius:5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:3}
+  .bar:hover::after{opacity:1}
+  .xlabels{display:flex;gap:3px;margin-top:5px}
+  .xlabels span{flex:1;font-size:10px;color:var(--muted);text-align:center;overflow:hidden;white-space:nowrap}
+  .empty{font-size:13px;color:var(--muted);padding:40px 0;text-align:center}
+  .toggle{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);font-size:13px;cursor:pointer}
+  .toggle .bell{font-size:16px}
+  .switch{width:38px;height:21px;border-radius:999px;background:var(--bar-zero);position:relative;transition:background .2s;flex-shrink:0}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .switch.on{background:var(--accent)}
+  .switch.on::after{left:19px}
+
+  /* ---------- tokens ---------- */
+  .tokens{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+  .tok{display:flex;align-items:center;gap:10px;font-size:12px}
+  .tok i{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);flex-shrink:0}
+
+  @keyframes shake{0%{transform:rotate(0)}30%{transform:rotate(-6deg) translateY(2px)}60%{transform:rotate(5deg)}100%{transform:rotate(0)}}
+  @keyframes popUp{0%{opacity:0;transform:translateY(4px) scale(.6)}20%{opacity:1;transform:translateY(0) scale(1.15)}100%{opacity:0;transform:translateY(-26px) scale(1)}}
+  @keyframes ripple{0%{opacity:.9;transform:scale(.5)}100%{opacity:0;transform:scale(2.6)}}
+  @keyframes bounce{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪵 电子木鱼 · UI 预览</h1>
+  <div class="sub">禅意木质风 · 右侧悬浮木鱼可直接拖拽、点击敲击；下方看板为设置页 mockup</div>
+  <div class="toolbar">
+    <button class="theme-btn" id="themeBtn">🌗 切换深浅主题</button>
+    <span class="sub" id="themeNote"></span>
+  </div>
+
+  <!-- 悬浮木鱼 demo -->
+  <div id="demoFish" title="点我敲一下，也可以拖到别处">
+    <div id="fishSlot"></div>
+    <div class="hover-tip">今天已敲 <b id="badgeNum">12</b> 次</div>
+  </div>
+
+  <!-- 设置页看板 mockup -->
+  <div class="section">
+    <h2>设置页 · 电子木鱼 <span class="tag">mockup</span></h2>
+    <div class="hint">页面内的小木鱼也能敲（与悬浮木鱼共用同一计数）</div>
+    <div class="page-head" style="margin-top:14px">
+      <div class="mini-fish" id="miniFish"><div id="miniSlot"></div></div>
+      <div>
+        <div class="page-title">电子木鱼</div>
+        <div class="page-sub">点一下小木鱼，积攒今日份安心</div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="v"><b id="cToday">12</b></div><div class="k">今日敲击</div></div>
+      <div class="card"><div class="v"><b id="cTotal">1,204</b></div><div class="k">累计敲击</div></div>
+      <div class="card"><div class="v"><b id="cStreak">9</b></div><div class="k">连续天数</div></div>
+    </div>
+
+    <div class="range" id="rangeRow"></div>
+    <div class="chart-box" id="chartBox"></div>
+
+    <div class="toggle" id="visibilityToggle">
+      <span class="switch on" id="switch"></span>
+      <span class="bell">🔔</span>
+      <span id="toggleText">悬浮木鱼：显示中（点这里隐藏）</span>
+    </div>
+  </div>
+
+  <!-- 设计令牌 -->
+  <div class="section">
+    <h2>设计令牌 <span class="tag">Design Tokens</span></h2>
+    <div class="tokens" id="tokenGrid"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- 木鱼美术（与 fish.svg 一致） ---------- */
+function fishHTML(size){
+  return `<svg viewBox="0 0 140 104" width="${size}" style="display:block">
+    <defs>
+      <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8A062"/><stop offset="1" stop-color="#A8622A"/></linearGradient>
+      <linearGradient id="gHead" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EABD85"/><stop offset="1" stop-color="#C9884A"/></linearGradient>
+    </defs>
+    <rect x="24" y="78" width="92" height="13" rx="6.5" fill="#8A5A2B" stroke="#6B421A" stroke-width="2"/>
+    <rect x="26" y="80" width="88" height="3" rx="1.5" fill="#A07038" opacity="0.7"/>
+    <path d="M32 52 C30 32 48 22 70 22 C92 22 112 32 110 52 C108 70 88 76 70 76 C50 76 34 68 32 52 Z" fill="url(#gBody)" stroke="#7C4A1E" stroke-width="2.5"/>
+    <ellipse cx="46" cy="38" rx="19" ry="12" fill="url(#gHead)"/>
+    <ellipse cx="42" cy="35" rx="9" ry="5" fill="#F0CE9D" opacity="0.85"/>
+    <path d="M30 52 C46 44 64 44 80 52" fill="none" stroke="#5D3412" stroke-width="4" stroke-linecap="round"/>
+    <path d="M32 56 C48 49 66 49 80 55" fill="none" stroke="#8A5426" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M40 37 Q44 33 48 37" fill="none" stroke="#3A2410" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M108 50 L122 38 L126 46 L122 50 L126 54 L122 62 Z" fill="#9A5C24" stroke="#6B421A" stroke-width="2" stroke-linejoin="round"/>
+    <g class="mallet"><rect x="113" y="16" width="6" height="28" rx="3" fill="#8A5A2B" stroke="#6B421A" stroke-width="1.5"/><ellipse cx="116" cy="13" rx="9" ry="7" fill="#B87A35" stroke="#6B421A" stroke-width="1.5"/></g>
+  </svg>`;
+}
+
+/* ---------- 样例数据（近 30 天） ---------- */
+const DAYS = [];
+let seed = 20260818;
+for(let i=0;i<30;i++){
+  seed = (seed*9301+49297)%233280;
+  let v = Math.floor(seed/233280*34);
+  if(v<7) v=0;
+  DAYS.push(v);
+}
+// 最近 6 天造一条上升的连续打卡
+[6,9,13,18,25,33].forEach((v,i)=>{DAYS[30-6+i]=v;});
+
+const LABELS = [];
+const base = new Date();
+for(let i=29;i>=0;i--){
+  const d = new Date(base); d.setDate(d.getDate()-i);
+  LABELS.push(String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+}
+const TODAY = LABELS[29];
+
+/* ---------- 共享计数 ---------- */
+let today = 12;                       // 样例今日值
+const baseTotal = 1204 - 12;          // 样例累计（不含今日）
+
+/* ---------- 敲击反馈 ---------- */
+function knockOn(el, popSlot){
+  el.classList.remove('knock');
+  void el.offsetWidth;                // 重新触发动画
+  el.classList.add('knock');
+  today += 1;
+  bounce('badgeNum'); bounce('cToday');
+  cTotal.textContent = (baseTotal+today).toLocaleString();
+  const pop = document.createElement('span');
+  pop.className='pop'; pop.textContent='+1';
+  popSlot.appendChild(pop);
+  setTimeout(()=>pop.remove(),900);
+  setTimeout(()=>el.classList.remove('knock'),220);
+}
+function bounce(id){
+  const n = document.getElementById(id);
+  n.style.animation='none'; void n.offsetWidth;
+  n.style.animation='';
+}
+
+/* ---------- 悬浮木鱼：拖动 + 点击 ---------- */
+const demoFish = document.getElementById('demoFish');
+document.getElementById('fishSlot').innerHTML = fishHTML(96);
+let drag = null;
+demoFish.addEventListener('pointerdown', e=>{
+  const r = demoFish.getBoundingClientRect();
+  drag = {sx:e.clientX, sy:e.clientY, sl:r.left, st:r.top, moved:false};
+  try{ demoFish.setPointerCapture(e.pointerId); }catch(err){}
+});
+demoFish.addEventListener('pointermove', e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(Math.abs(dx)+Math.abs(dy)>5) drag.moved=true;
+  if(drag.moved){
+    demoFish.style.left=(drag.sl+dx)+'px'; demoFish.style.top=(drag.st+dy)+'px';
+    demoFish.style.right='auto'; demoFish.style.bottom='auto';
+    demoFish.classList.add('dragging');
+  }
+});
+demoFish.addEventListener('pointerup', ()=>{
+  if(drag && !drag.moved) knockOn(demoFish, demoFish);
+  drag=null;
+  demoFish.classList.remove('dragging');
+});
+
+/* ---------- 设置页小木鱼 ---------- */
+const miniFish = document.getElementById('miniFish');
+document.getElementById('miniSlot').innerHTML = fishHTML(72);
+miniFish.addEventListener('click', ()=>knockOn(miniFish, miniFish));
+
+/* ---------- 看板：范围切换 + 柱状图 ---------- */
+const rangeRow = document.getElementById('rangeRow');
+const chartBox = document.getElementById('chartBox');
+let range = 14;
+[7,14,30].forEach(n=>{
+  const b=document.createElement('button');
+  b.textContent='近 '+n+' 天';
+  b.className = range===n?'on':'';
+  b.onclick=()=>{ range=n; renderChart(); b.classList.add('on'); };
+  rangeRow.appendChild(b);
+});
+function renderChart(){
+  const slice = DAYS.slice(30-range);
+  const labels = LABELS.slice(30-range);
+  const max = Math.max(1, ...slice);
+  rangeRow.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  rangeRow.querySelectorAll('button').forEach(b=>{ if(b.textContent.includes(String(range))) b.classList.add('on'); });
+  chartBox.innerHTML='';
+  const chart=document.createElement('div'); chart.className='chart';
+  slice.forEach((v,i)=>{
+    const bar=document.createElement('div');
+    bar.className='bar'+(v?'':' zero')+(i===slice.length-1?' today':'');
+    bar.style.height=Math.max(2, Math.round(v/max*108))+'px';
+    bar.dataset.tip=labels[i]+' · '+v+' 次';
+    chart.appendChild(bar);
+  });
+  chartBox.appendChild(chart);
+  const xl=document.createElement('div'); xl.className='xlabels';
+  labels.forEach((l,i)=>{
+    const s=document.createElement('span');
+    s.textContent = (i%5===0||i===labels.length-1) ? l : '·';
+    if(i===labels.length-1) s.style.color='var(--accent)';
+    xl.appendChild(s);
+  });
+  chartBox.appendChild(xl);
+}
+renderChart();
+
+/* ---------- 显示/隐藏开关 ---------- */
+const switchEl=document.getElementById('switch');
+const toggleText=document.getElementById('toggleText');
+let visible=true;
+document.getElementById('visibilityToggle').onclick=()=>{
+  visible=!visible;
+  switchEl.classList.toggle('on', visible);
+  demoFish.style.display = visible?'':'none';
+  toggleText.textContent = visible?'悬浮木鱼：显示中（点这里隐藏）':'悬浮木鱼：已隐藏（点这里重新显示）';
+};
+
+/* ---------- 主题切换 ---------- */
+const themeBtn=document.getElementById('themeBtn');
+const themeNote=document.getElementById('themeNote');
+function applyTheme(dark){ document.documentElement.classList.toggle('dark', dark); themeNote.textContent = dark?'深色主题':'浅色主题'; }
+themeBtn.onclick=()=>applyTheme(!document.documentElement.classList.contains('dark'));
+applyTheme(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+
+/* ---------- 设计令牌展示 ---------- */
+const tokens=[
+  ['wood-deep','#6B421A'],['wood-dark','#8A5A2B'],['wood-base','#B06F2F'],['wood-mid','#C9884A'],
+  ['wood-light','#D8A062'],['wood-hi','#EABD85'],['accent','#D99A3D'],['accent-hi','#E8A75A'],
+];
+const grid=document.getElementById('tokenGrid');
+tokens.forEach(([name,hex])=>{
+  const t=document.createElement('div'); t.className='tok';
+  t.innerHTML=`<i style="background:${hex}"></i><span>${name}<br><small style="opacity:.6">${hex}</small></span>`;
+  grid.appendChild(t);
+});
+</script>
+</body>
+</html>

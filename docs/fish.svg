@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 104" width="140" height="104">
+  <defs>
+    <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D8A062"/>
+      <stop offset="1" stop-color="#A8622A"/>
+    </linearGradient>
+    <linearGradient id="gHead" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EABD85"/>
+      <stop offset="1" stop-color="#C9884A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 底座木垫 -->
+  <rect x="24" y="78" width="92" height="13" rx="6.5" fill="#8A5A2B" stroke="#6B421A" stroke-width="2"/>
+  <rect x="26" y="80" width="88" height="3" rx="1.5" fill="#A07038" opacity="0.7"/>
+
+  <!-- 鱼身（圆胖、头朝左） -->
+  <path d="M32 52 C30 32 48 22 70 22 C92 22 112 32 110 52 C108 70 88 76 70 76 C50 76 34 68 32 52 Z"
+        fill="url(#gBody)" stroke="#7C4A1E" stroke-width="2.5"/>
+  <!-- 头部高光区 -->
+  <ellipse cx="46" cy="38" rx="19" ry="12" fill="url(#gHead)"/>
+  <ellipse cx="42" cy="35" rx="9" ry="5" fill="#F0CE9D" opacity="0.85"/>
+
+  <!-- 大嘴缝（微弧微笑） -->
+  <path d="M30 52 C46 44 64 44 80 52" fill="none" stroke="#5D3412" stroke-width="4" stroke-linecap="round"/>
+  <path d="M32 56 C48 49 66 49 80 55" fill="none" stroke="#8A5426" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- 半闭禅眼 -->
+  <path d="M40 37 Q44 33 48 37" fill="none" stroke="#3A2410" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- 鱼尾（分叉小尾） -->
+  <path d="M108 50 L122 38 L126 46 L122 50 L126 54 L122 62 Z" fill="#9A5C24" stroke="#6B421A" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- 木槌（敲击时绕柄根下摆） -->
+  <g class="mallet" style="transform-box:fill-box;transform-origin:50% 90%">
+    <rect x="113" y="16" width="6" height="28" rx="3" fill="#8A5A2B" stroke="#6B421A" stroke-width="1.5"/>
+    <ellipse cx="116" cy="13" rx="9" ry="7" fill="#B87A35" stroke="#6B421A" stroke-width="1.5"/>
+  </g>
+</svg>
