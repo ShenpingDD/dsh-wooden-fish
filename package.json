@@ -5,6 +5,9 @@
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
+  "scripts": {
+    "check": "node --check lib/index.js && node --check lib/client.js && node scripts/smoke.mjs"
+  },
   "exports": {
     ".": {
       "default": "./lib/index.js"

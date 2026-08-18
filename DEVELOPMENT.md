@@ -17,12 +17,13 @@ The package is plain JavaScript — **no build step**.
 ## Checks
 
 ```bash
+npm run check                    # all three checks below in one command
 node --check lib/index.js        # host syntax
 node --check lib/client.js       # client syntax
 node scripts/smoke.mjs           # host smoke test (mock ctx, temp DSH_HOME)
 ```
 
-CI runs all three on every push (see `.github/workflows/ci.yml`).
+`npm run check` is the single entry point used for validation.
 
 ## Running against a live harness
 
