@@ -79,13 +79,13 @@ package `exports["."]` (`lib/index.js`) and the **client** face through
   fallbacks, so it follows light/dark and custom themes (e.g. sakura). The fish
   artwork and the heat ramp keep the fixed wood palette by design.
 - **Heatmap**: a CSS grid, columns = weeks, rows = Mon–Sun.
-  - Track sizing `repeat(N, minmax(0, 14px))` + `aspect-ratio: 1/1` cells →
-    cells scale with the container (14 px cap; the 1-year view compresses) and
-    never overflow.
+  - Track sizing `repeat(N, minmax(0, 1fr))` + `aspect-ratio: 1/1` cells →
+    share the panel width equally (bigger for short ranges, compact for the
+    one-year view) and never overflow.
   - The wrapper is `overflow-x: clip; overflow-y: visible` so no horizontal
     scrollbar appears while tooltips can still escape vertically.
   - The last 8 columns right-anchor their tooltips (`nth-last-child(-n+56)`),
-    because at 8–14 px column widths a centered tooltip would widen the grid.
+    because at 8-20 px column widths a centered tooltip would widen the grid.
 - A module-scoped `store` keeps the show/hide state shared between the two
   components; while hidden, the overlay renders a "restore" pill so the fish
   is always recoverable.

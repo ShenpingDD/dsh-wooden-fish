@@ -11,7 +11,7 @@ DeepSeek Harness **0.1.5** compatibility + trend-chart redesign.
 
 ### Added
 - **Calendar heatmap** (GitHub-contribution style) replaces the bar chart: 3 / **6 (default)** / 12-month ranges, 5-level wood ramp, month + weekday labels, hover tooltip, today outline, and a per-range summary line
-- **Scrollbar-free responsive heatmap**: cells scale with the container (14 px cap, auto-compressed for the 1-year view) and the wrapper clips horizontally, so no horizontal scrollbar appears at any width; the last 8 columns right-anchor their tooltips
+- **Scrollbar-free responsive heatmap**: cells share the panel width equally (larger for short ranges, compact for the 1-year view) and the wrapper clips horizontally, so no horizontal scrollbar appears at any width; the last 8 columns right-anchor their tooltips
 - **Position + visibility persistence** (localStorage): the fish returns to where you left it and stays hidden across reloads
 - **Theme adaptation**: chrome (cards, borders, text, buttons, tooltip) follows the active DSH theme through the official `--dsw-alias-*` CSS variables — including the sakura theme
 - `POST /muyu/client-hello` self-proof route: the client half reports on mount, recorded in `$DSH_HOME/muyu-host-diag.json` (a server-side answer to "is the UI actually mounted?")

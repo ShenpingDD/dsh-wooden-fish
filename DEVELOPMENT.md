@@ -76,9 +76,9 @@ restart DSH to pick up changes (client bundle rev changes; host code re-applies)
    `slots` is provided by `@deepseek-ai/dsh-client-ui-renderer`. Verify a name
    against the shell's static module map instead of guessing.
 6. **Heatmap layout: never let tooltips size the grid.** A centered tooltip on a
-   8–14 px cell widens the track's scroll area and produces a horizontal
+   8-20 px cell widens the track's scroll area and produces a horizontal
    scrollbar even at `opacity: 0`. Keep the wrapper `overflow-x: clip`, size
-   tracks with `minmax(0, 14px)`, and right-anchor the trailing columns'
+   tracks with `minmax(0, 1fr)` (equal-share fill), and right-anchor
    tooltips.
 7. **`days` is the heatmap's contract.** The host returns the full
    `{ "YYYY-MM-DD": n }` map; the client builds 3/6/12-month windows from it, so

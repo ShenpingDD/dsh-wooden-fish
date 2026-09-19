@@ -16,7 +16,7 @@
 - **Calendar heatmap** in settings (`设置 → 电子木鱼`): 3 / **6 (default)** / 12-month ranges on a 5-level wood ramp, month + weekday labels, hover for details, today outlined — above today / total / streak cards
 - **Remembers your setup** — fish position and show/hide state persist across reloads
 - **Follows your theme** — chrome uses the harness theme tokens (`--dsw-alias-*`), so it matches light/dark and custom themes (e.g. sakura); the fish and heat ramp keep their wood identity
-- **Scrollbar-free responsive heatmap** — cells scale to the panel width (14 px cap, auto-compressed for the 1-year view)
+- **Scrollbar-free responsive heatmap** — cells share the panel width equally (larger for short ranges, compact for the 1-year view)
 - Zen wood style, zero network calls, data stays local
 
 > ⚠️ No knock **sound** yet — feedback is visual only.
