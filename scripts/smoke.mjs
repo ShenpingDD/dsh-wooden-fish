@@ -38,6 +38,7 @@ const ctx = {
 const dispose = apply(ctx)
 check('注册了 /muyu/knock', typeof registered['/muyu/knock'] === 'function')
 check('注册了 /muyu/summary', typeof registered['/muyu/summary'] === 'function')
+check('注册了 /muyu/client-hello', typeof registered['/muyu/client-hello'] === 'function')
 
 console.log('[3] 敲击计数')
 function mockRes() {
@@ -52,6 +53,7 @@ const j1 = JSON.parse(r1.body)
 check('knock 返回 today=1', j1.today === 1)
 check('knock 返回 total=1', j1.total === 1)
 check('knock 返回 series(30)', Array.isArray(j1.series) && j1.series.length === 30)
+check('knock 返回全量 days（热力图数据源）', !!j1.days && typeof j1.days === 'object')
 
 console.log('[4] summary 读取')
 const r2 = mockRes()
