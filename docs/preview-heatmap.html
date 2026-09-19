@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电子木鱼 v1.1 · 日历热力图设计预览</title>
+<style>
+  :root{
+    --paper:#F7F2EA; --card:#FDFAF4; --ink:#4A3520; --muted:rgba(74,53,32,.62);
+    --line:rgba(120,90,60,.22); --chip:rgba(139,100,60,.10);
+    --accent:#C98A3B; --accent-hi:#E8A75A; --shadow:0 6px 18px rgba(80,50,20,.16);
+    --h0:rgba(120,90,60,.10); --h1:#F0DFC4; --h2:#E3C293; --h3:#D09A54; --h4:#B2702F;
+    --tip-bg:rgba(30,20,8,.88); --tip-fg:#FFE7C2;
+  }
+  html.dark{
+    --paper:#201C17; --card:#2A241D; --ink:#EADDC8; --muted:rgba(234,221,200,.58);
+    --line:rgba(200,160,110,.20); --chip:rgba(200,160,110,.08);
+    --accent:#E8A75A; --accent-hi:#F2BC7A; --shadow:0 6px 20px rgba(0,0,0,.45);
+    --h0:rgba(200,160,110,.10); --h1:#4A3A26; --h2:#7A5A32; --h3:#B07C3C; --h4:#E0A055;
+    --tip-bg:rgba(0,0,0,.85); --tip-fg:#FFE7C2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);padding:36px 24px 70px}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:22px;letter-spacing:1px}
+  .sub{font-size:13px;color:var(--muted);margin-top:6px}
+  .toolbar{display:flex;gap:12px;align-items:center;margin:18px 0 8px}
+  .theme-btn{cursor:pointer;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:12px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:20px;box-shadow:var(--shadow)}
+  .section>h2{font-size:15px;letter-spacing:1px;display:flex;gap:8px;align-items:center}
+  .tag{font-size:11px;font-weight:400;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:1px 8px}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* 设置页 */
+  .head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .mini{filter:drop-shadow(0 3px 8px rgba(80,50,20,.25))}
+  .mini svg{display:block;width:64px;height:auto}
+  .title{font-size:15px;font-weight:600}
+  .cards{display:flex;gap:10px;flex-wrap:wrap}
+  .card{flex:1;min-width:110px;background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .card .v{font-size:24px;font-weight:700;color:var(--accent);line-height:1.2}
+  .card .k{font-size:12px;color:var(--muted);margin-top:3px}
+  .range{display:flex;gap:6px;margin:18px 0 14px}
+  .range button{cursor:pointer;background:var(--chip);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 12px;font-size:12px}
+  .range button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* 日历热力图 —— 自适应压缩：格子随容器宽度缩放（上限 14px），永不横向溢出 */
+  .heatwrap{display:flex;gap:6px;align-items:flex-start;overflow-x:clip;overflow-y:visible}
+  .lhs{display:grid;grid-template-rows:repeat(7,1fr);gap:3px;font-size:9px;line-height:1;color:var(--muted);margin-top:18px;align-self:stretch;text-align:right;flex-shrink:0}
+  .heatmain{flex:1;min-width:0}
+  .months{display:grid;gap:3px;height:14px;margin-bottom:4px}
+  .months span{font-size:10px;color:var(--muted);white-space:nowrap;overflow:visible}
+  .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px}
+  .cell{width:100%;min-width:0;aspect-ratio:1/1;border-radius:2.5px;background:var(--h0);position:relative}
+  .cell.l1{background:var(--h1)} .cell.l2{background:var(--h2)} .cell.l3{background:var(--h3)} .cell.l4{background:var(--h4)}
+  .cell.future{background:transparent}
+  .cell.today{outline:1.5px solid var(--accent);outline-offset:1px}
+  .cell::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);background:var(--tip-bg);color:var(--tip-fg);font-size:11px;padding:3px 7px;border-radius:5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:5}
+  .cell:hover::after{opacity:1}
+  /* 最后 8 列 tooltip 右对齐锚定：既避免外溢撑出滚动，也保证最近数据的气泡完整可读 */
+  .cell:nth-last-child(-n+56)::after{left:auto;right:0;transform:none}
+  .heatfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .legend{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+  .legend i{width:12px;height:12px;border-radius:2.5px;display:inline-block}
+  .summary{font-size:12px;color:var(--muted)}
+  .toggle{display:flex;align-items:center;gap:10px;margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);font-size:13px;cursor:pointer}
+  .switch{width:38px;height:21px;border-radius:999px;background:var(--h0);position:relative;flex-shrink:0}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .switch.on{background:var(--accent)} .switch.on::after{left:19px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--muted);font-weight:500}
+  code{background:var(--chip);border-radius:4px;padding:1px 5px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪵 电子木鱼 v1.1 · 日历热力图设计预览</h1>
+  <div class="sub">趋势图由「柱状图」改为「日历热力图」（GitHub 贡献图风格）· 请确认设计后我再实现</div>
+  <div class="toolbar">
+    <button class="theme-btn" id="themeBtn">🌗 切换深浅主题</button>
+    <span class="sub" id="themeNote"></span>
+  </div>
+
+  <div class="section">
+    <h2>设置页 · 电子木鱼 <span class="tag">新版</span></h2>
+    <div class="hint">悬停任意方格查看「日期 · 次数」；今日带描边；0 次保留浅底格</div>
+
+    <div class="head" style="margin-top:16px">
+      <div class="mini" id="miniFish"></div>
+      <div>
+        <div class="title">电子木鱼</div>
+        <div class="hint" style="margin-top:2px">点一下小木鱼，积攒今日份安心</div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="v" id="cToday">0</div><div class="k">今日敲击</div></div>
+      <div class="card"><div class="v" id="cTotal">0</div><div class="k">累计敲击</div></div>
+      <div class="card"><div class="v" id="cStreak">0</div><div class="k">连续天数</div></div>
+    </div>
+
+    <div class="range" id="rangeRow"></div>
+
+    <div class="heatwrap">
+      <div class="lhs" id="lhs"><span>一</span><span></span><span>三</span><span></span><span>五</span><span></span><span></span></div>
+      <div class="heatmain">
+        <div class="months" id="months"></div>
+        <div class="heat" id="heat"></div>
+      </div>
+    </div>
+    <div class="heatfoot">
+      <div class="summary" id="summary"></div>
+      <div class="legend">
+        少
+        <i style="background:var(--h0)"></i>
+        <i style="background:var(--h1)"></i>
+        <i style="background:var(--h2)"></i>
+        <i style="background:var(--h3)"></i>
+        <i style="background:var(--h4)"></i>
+        多
+      </div>
+    </div>
+
+    <div class="toggle">
+      <span class="switch on"></span><span>🔔</span>
+      <span>悬浮木鱼：显示中（点这里隐藏）</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>设计要点 <span class="tag">说明</span></h2>
+    <table>
+      <tr><th>项</th><th>设计</th></tr>
+      <tr><td>形态</td><td>周 × 天方格矩阵（列=周，行=周一~周日），方格 12px、圆角 2.5px</td></tr>
+      <tr><td>配色</td><td>5 档木色渐变（0 次浅底格；1-3 / 4-8 / 9-15 / 16+ 递增），深浅主题各一套</td></tr>
+      <tr><td>范围</td><td>近 3 个月（13 周，默认）/ 近 6 个月 / 近一年（53 周），横向可滚动</td></tr>
+      <tr><td>标签</td><td>顶部月份标签（月切换处显示）、左侧周一/三/五、底部图例「少→多」</td></tr>
+      <tr><td>交互</td><td>悬停出「2026-09-19 · 3 次」气泡；今日描边高亮；未来日期留空</td></tr>
+      <tr><td>统计行</td><td>热力图下方一行摘要：<code>近 3 个月 共 214 次 · 有敲击 68 天 · 最长连续 9 天</code></td></tr>
+      <tr><td>保留</td><td>今日 / 累计 / 连续天数卡片、页内小木鱼、显隐开关</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ---- 木鱼 SVG（与插件一致） ---- */
+function fishHTML(size){
+  return `<svg viewBox="0 0 140 104" width="${size}" style="display:block">
+    <defs>
+      <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D8A062"/><stop offset="1" stop-color="#A8622A"/></linearGradient>
+      <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EABD85"/><stop offset="1" stop-color="#C9884A"/></linearGradient>
+    </defs>
+    <rect x="24" y="78" width="92" height="13" rx="6.5" fill="#8A5A2B" stroke="#6B421A" stroke-width="2"/>
+    <path d="M32 52 C30 32 48 22 70 22 C92 22 112 32 110 52 C108 70 88 76 70 76 C50 76 34 68 32 52 Z" fill="url(#gB)" stroke="#7C4A1E" stroke-width="2.5"/>
+    <ellipse cx="46" cy="38" rx="19" ry="12" fill="url(#gH)"/>
+    <ellipse cx="42" cy="35" rx="9" ry="5" fill="#F0CE9D" opacity="0.85"/>
+    <path d="M30 52 C46 44 64 44 80 52" fill="none" stroke="#5D3412" stroke-width="4" stroke-linecap="round"/>
+    <path d="M32 56 C48 49 66 49 80 55" fill="none" stroke="#8A5426" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>
+    <path d="M40 37 Q44 33 48 37" fill="none" stroke="#3A2410" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M108 50 L122 38 L126 46 L122 50 L126 54 L122 62 Z" fill="#9A5C24" stroke="#6B421A" stroke-width="2" stroke-linejoin="round"/>
+    <g class="mallet"><rect x="113" y="16" width="6" height="28" rx="3" fill="#8A5A2B" stroke="#6B421A" stroke-width="1.5"/><ellipse cx="116" cy="13" rx="9" ry="7" fill="#B87A35" stroke="#6B421A" stroke-width="1.5"/></g>
+  </svg>`;
+}
+document.getElementById('miniFish').innerHTML = fishHTML(64);
+
+/* ---- 样例数据（约一年，确定性伪随机 + 近期连续打卡） ---- */
+const DATA = {};
+const today = new Date(); today.setHours(0,0,0,0);
+function fmt(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0') }
+let seed = 20260919;
+for (let i = 364; i >= 0; i--) {
+  const d = new Date(today); d.setDate(d.getDate() - i);
+  seed = (seed*9301+49297)%233280;
+  let v = Math.floor(seed/233280*30);
+  if (v < 6) v = 0;
+  const dow = (d.getDay()+6)%7;
+  if (dow >= 5 && v > 0) v = Math.round(v*1.5);   // 周末敲得多
+  DATA[fmt(d)] = v;
+}
+// 最近 9 天连续打卡（体现连击）
+for (let i = 8; i >= 0; i--) {
+  const d = new Date(today); d.setDate(d.getDate() - i);
+  DATA[fmt(d)] = [6, 9, 4, 12, 8, 17, 11, 22, 7][8 - i];
+}
+
+const RANGES = [[13, '近 3 个月'], [26, '近 6 个月'], [53, '近一年']];
+let weeks = 26; // 默认近 6 个月（已确认）
+
+function level(c){ return c === 0 ? 0 : c <= 3 ? 1 : c <= 8 ? 2 : c <= 15 ? 3 : 4 }
+
+function render(){
+  const dow = (today.getDay()+6)%7;
+  const start = new Date(today); start.setDate(start.getDate() - dow - (weeks-1)*7);
+
+  // 月份标签 + 列宽（自适应：格子随容器宽度缩放，上限 14px，永不横向溢出）
+  const cols = `repeat(${weeks}, minmax(0, 14px))`;
+  const months = document.getElementById('months');
+  months.style.gridTemplateColumns = cols;
+  months.innerHTML = '';
+  let lastMonth = -1;
+  for (let w = 0; w < weeks; w++) {
+    const d = new Date(start); d.setDate(d.getDate() + w*7 + 3);
+    const s = document.createElement('span');
+    if (d.getMonth() !== lastMonth) { s.textContent = (d.getMonth()+1) + '月'; lastMonth = d.getMonth(); }
+    months.appendChild(s);
+  }
+
+  // 方格
+  const heat = document.getElementById('heat');
+  heat.style.gridTemplateColumns = cols;
+  heat.innerHTML = '';
+  let sum = 0, activeDays = 0, longest = 0, run = 0;
+  for (let i = 0; i < weeks*7; i++) {
+    const d = new Date(start); d.setDate(d.getDate() + i);
+    const future = d > today;
+    const key = fmt(d);
+    const c = future ? 0 : (DATA[key] || 0);
+    if (!future) { sum += c; if (c > 0) { activeDays++; run++; longest = Math.max(longest, run) } else { run = 0 } }
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (future ? ' future' : (c ? ' l'+level(c) : '')) + (key === fmt(today) ? ' today' : '');
+    cell.dataset.tip = key + ' · ' + c + ' 次';
+    heat.appendChild(cell);
+  }
+  document.getElementById('summary').textContent =
+    RANGES.find(r => r[0] === weeks)[1] + '　共 ' + sum + ' 次 · 有敲击 ' + activeDays + ' 天 · 最长连续 ' + longest + ' 天';
+
+  // 统计卡片
+  const todayCount = DATA[fmt(today)] || 0;
+  document.getElementById('cToday').textContent = todayCount;
+  document.getElementById('cTotal').textContent = Object.values(DATA).reduce((a,b)=>a+b,0).toLocaleString();
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const v = DATA[fmt(d)];
+    if (v > 0) streak++; else break;
+  }
+  document.getElementById('cStreak').textContent = streak;
+}
+
+// 范围按钮
+const rangeRow = document.getElementById('rangeRow');
+RANGES.forEach(([w, label]) => {
+  const b = document.createElement('button');
+  b.textContent = label;
+  b.className = weeks === w ? 'on' : '';
+  b.onclick = () => { weeks = w; render();
+    [...rangeRow.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); };
+  rangeRow.appendChild(b);
+});
+render();
+
+// 主题
+const note = document.getElementById('themeNote');
+function applyTheme(dark){ document.documentElement.classList.toggle('dark', dark); note.textContent = dark ? '深色主题' : '浅色主题'; }
+document.getElementById('themeBtn').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
+applyTheme(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+</script>
+</body>
+</html>

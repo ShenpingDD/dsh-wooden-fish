@@ -13,17 +13,19 @@
 - 敲击反馈：木鱼晃动 + 木槌朝左敲落 + 声波环 + 「+1」飘字
 - 悬停木鱼显示「今天已敲 N 次」
 - **按天计数**（`YYYY-MM-DD` 分桶），持久化到 `$DSH_HOME/wooden-fish-data.json`，重启不丢
-- **设置 → 电子木鱼**：今日 / 累计 / 连续天数卡片 + 7/14/30 天柱状趋势图（0 次灰柱、悬停看数值、今日高亮）
-- 可随时隐藏/恢复悬浮木鱼（隐藏后出现「点击恢复」药丸）
-- 禅意木质风，适配深浅主题，纯本地零网络
+- **设置 → 电子木鱼**：今日 / 累计 / 连续天数卡片 + **日历热力图**（近 3 / **6（默认）** / 12 个月，5 档木色、月份 + 星期标签、悬停看数值、今日描边、范围摘要行）
+- **记住你的设置**：木鱼位置与显隐状态刷新后保持
+- **跟随主题**：外壳使用 harness 主题 token（`--dsw-alias-*`），自动匹配浅/深色与自定义主题（如 sakura）；木鱼与热力色阶保持木质本色
+- **无横向滚动条**：热力图按容器宽度自适应压缩（14px 上限，一年视图自动压缩）
+- 禅意木质风，纯本地零网络
 
-> ⚠️ v1 无敲击音效（安装版插件运行在浏览器端，音频不在本版范围），反馈以视觉为主。
+> ⚠️ 暂无敲击音效，反馈以视觉为主。
 
 ## 📸 界面预览
 
 ![UI 设计预览](docs/screenshots/ui-design-preview.png)
 
-交互演示：[docs/wooden-fish-preview.html](docs/wooden-fish-preview.html)（浏览器打开——可拖动、敲击木鱼、切换趋势图范围）
+交互演示：[docs/preview-heatmap.html](docs/preview-heatmap.html)（浏览器打开——可拖动、敲击木鱼、切换热力图范围）
 
 ## 📦 安装
 
@@ -48,10 +50,10 @@ dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:<owner>/wood
 | 操作 | 效果 |
 |---|---|
 | 点击木鱼 | 敲击一次：今日 +1，播放敲击动画 |
-| 拖动木鱼 | 移动到任意位置（刷新后回默认右下角） |
+| 拖动木鱼 | 移动到任意位置（位置会被记住） |
 | 悬停木鱼 | 显示「今天已敲 N 次」气泡 |
-| 设置 → 电子木鱼 | 统计卡片 + 每日趋势图（7/14/30 天切换） |
-| 设置页开关 | 隐藏/显示悬浮木鱼（隐藏后出现恢复药丸） |
+| 设置 → 电子木鱼 | 统计卡片 + 日历热力图（近 3 / 6 / 12 个月） |
+| 设置页开关 | 隐藏/显示悬浮木鱼（隐藏后出现恢复药丸，选择会被记住） |
 
 ## 💾 数据
 
@@ -68,8 +70,8 @@ dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:<owner>/wood
 
 | 半端 | 机制 |
 |---|---|
-| **Host**（`lib/index.js`） | 在 harness 的 `webServer` 上注册两个 JSON 路由：`POST /muyu/knock`（今日 +1）与 `GET /muyu/summary`（统计）；用 `node:fs` 直接持久化。**必须声明 `inject: ['webServer']`**——空 `inject` 会在服务就绪前 apply，届时 `ctx.get()` 全部返回 undefined。 |
-| **Client**（`lib/client.js`） | web `ModuleLoader` bundle（`window.__ModuleLoader__.load(...)`）：在 `shell.overlay` 渲染悬浮木鱼、在 `settings.section` 渲染统计页，通过同源 `fetch` 与 Host 通信。 |
+| **Host**（`lib/index.js`） | 在 harness 的 `webServer` 上注册 JSON 路由（`POST /muyu/knock`、`GET /muyu/summary`、`POST /muyu/client-hello`），用 `node:fs` 直接持久化。**必须声明非空 `inject`**（`['webServer']`）——空 `inject` 会在服务就绪前 apply，届时 `ctx.get()` 全部返回 undefined。 |
+| **Client**（`lib/client.js`） | web `ModuleLoader` bundle：在 `shell.overlay` 渲染悬浮木鱼、在 `settings.section` 渲染热力图页，通过同源 `fetch` 与 Host 通信。**0.1.5 上 `dsh.client.inject` 必须写真实存在的 id**（`@deepseek-ai/dsh-client-ui-renderer` 提供 `slots` 服务）；写了无法满足的 id，entry 会永远等待 → UI 静默不挂载。 |
 
 详见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 

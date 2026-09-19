@@ -13,17 +13,19 @@
 - Knock feedback: fish shake + mallet swing + ripple ring + floating "+1"
 - Hover the fish to see **今天已敲 N 次** (today's count)
 - **Per-day counting** (`YYYY-MM-DD` buckets), persisted to `$DSH_HOME/wooden-fish-data.json` — survives restarts
-- **Settings page** (`设置 → 电子木鱼`): today / total / streak cards + 7/14/30-day bar chart (zero days in gray, hover for details)
-- Show/hide the floating fish anytime (a small "restore" pill appears while hidden)
-- Zen wood style, light/dark theme aware, zero network calls, data stays local
+- **Calendar heatmap** in settings (`设置 → 电子木鱼`): 3 / **6 (default)** / 12-month ranges on a 5-level wood ramp, month + weekday labels, hover for details, today outlined — above today / total / streak cards
+- **Remembers your setup** — fish position and show/hide state persist across reloads
+- **Follows your theme** — chrome uses the harness theme tokens (`--dsw-alias-*`), so it matches light/dark and custom themes (e.g. sakura); the fish and heat ramp keep their wood identity
+- **Scrollbar-free responsive heatmap** — cells scale to the panel width (14 px cap, auto-compressed for the 1-year view)
+- Zen wood style, zero network calls, data stays local
 
-> ⚠️ v1 has no knock **sound** (the installed-plugin client runs in the browser; audio was out of scope). Feedback is visual only.
+> ⚠️ No knock **sound** yet — feedback is visual only.
 
 ## 📸 Preview
 
 ![UI design preview](docs/screenshots/ui-design-preview.png)
 
-Interactive demo: [docs/wooden-fish-preview.html](docs/wooden-fish-preview.html) (open in a browser — drag and knock the fish, switch the chart range)
+Interactive demo: [docs/preview-heatmap.html](docs/preview-heatmap.html) (open in a browser — drag and knock the fish, switch the heatmap range)
 
 ## 📦 Install
 
@@ -48,10 +50,10 @@ After restart the fish appears at the bottom-right automatically. **No re-activa
 | Action | Effect |
 |---|---|
 | Click the fish | Knock: +1 to today's count, animation feedback |
-| Drag the fish | Move it anywhere (position resets to default on reload) |
+| Drag the fish | Move it anywhere (the position is remembered) |
 | Hover the fish | Show today's count bubble |
-| 设置 → 电子木鱼 | Stats cards + daily trend chart (7/14/30 days) |
-| Toggle in settings | Show/hide the floating fish (a "restore" pill appears while hidden) |
+| 设置 → 电子木鱼 | Stats cards + calendar heatmap (3 / 6 / 12 months) |
+| Toggle in settings | Show/hide the floating fish (a "restore" pill appears while hidden; the choice persists) |
 
 ## 💾 Data
 
@@ -69,8 +71,8 @@ Stored at `$DSH_HOME/wooden-fish-data.json`:
 
 | Half | Mechanism |
 |---|---|
-| **Host** (`lib/index.js`) | Registers two JSON routes on the harness `webServer`: `POST /muyu/knock` (today +1) and `GET /muyu/summary` (stats). Persists via `node:fs` directly. Must declare `inject: ['webServer']` — an empty `inject` would apply before services are ready and `ctx.get()` returns `undefined` for everything. |
-| **Client** (`lib/client.js`) | A web `ModuleLoader` bundle (`window.__ModuleLoader__.load(...)`) that renders the fish in the `shell.overlay` slot and the stats page in `settings.section`, talking to the host over same-origin `fetch`. |
+| **Host** (`lib/index.js`) | Registers JSON routes on the harness `webServer` (`POST /muyu/knock`, `GET /muyu/summary`, `POST /muyu/client-hello`) and persists via `node:fs`. Must declare a non-empty `inject` (`['webServer']`) — an empty list applies before services are ready and `ctx.get()` returns `undefined` for everything. |
+| **Client** (`lib/client.js`) | A web `ModuleLoader` bundle (`window.__ModuleLoader__.load(...)`) that renders the fish in the `shell.overlay` slot and the heatmap page in `settings.section`, talking to the host over same-origin `fetch`. **On DSH 0.1.5 `dsh.client.inject` must name ids that actually exist** (`@deepseek-ai/dsh-client-ui-renderer` provides `slots`); an unsatisfiable id leaves the entry waiting forever and the UI silently never mounts. |
 
 More: [ARCHITECTURE.md](ARCHITECTURE.md)
 

@@ -42,7 +42,9 @@ restart DSH to pick up changes (client bundle rev changes; host code re-applies)
 - Host logs go to the DSH web process stdout (a `dsh-market-restart-*.out.log`
   in the system temp dir on typical setups).
 - The host writes a self-diagnostic file `$DSH_HOME/muyu-host-diag.json` on
-  apply: which services were found and which routes registered.
+  apply: which services were found, which routes registered, and the last
+  `clientHello` (the client half reports on mount — **this is the objective
+  answer to "did the UI actually mount?"**, no eyeballs required).
 - Probe the routes directly:
   ```bash
   curl http://127.0.0.1:3080/muyu/summary          # stats JSON
@@ -50,6 +52,8 @@ restart DSH to pick up changes (client bundle rev changes; host code re-applies)
   ```
   If `/muyu/summary` returns the SPA index HTML instead of JSON, the host
   routes are not registered — check the diag file and the inject declaration.
+  (`/muyu/*` answers without the DSH web token; the shell's own `/` and
+  `/plugins/*` routes need `?token=` → cookie on 0.1.5.)
 
 ## Gotchas (learned the hard way)
 
@@ -65,13 +69,27 @@ restart DSH to pick up changes (client bundle rev changes; host code re-applies)
 4. **The client bundle is independent of the host entry.** A host failure
    (e.g. routes missing) shows up as "UI loads but data is empty", with no
    boot error. Always curl the routes to check the host half.
+5. **`dsh.client.inject` must name ids the shell actually provides.** The
+   client entry *waits* on every id in that list; an id that no longer exists
+   (0.1.5 removed `@deepseek-ai/dsh-client-runtime`) makes the entry wait
+   forever — the bundle is served, nothing renders, nothing is logged. In 0.1.5
+   `slots` is provided by `@deepseek-ai/dsh-client-ui-renderer`. Verify a name
+   against the shell's static module map instead of guessing.
+6. **Heatmap layout: never let tooltips size the grid.** A centered tooltip on a
+   8–14 px cell widens the track's scroll area and produces a horizontal
+   scrollbar even at `opacity: 0`. Keep the wrapper `overflow-x: clip`, size
+   tracks with `minmax(0, 14px)`, and right-anchor the trailing columns'
+   tooltips.
+7. **`days` is the heatmap's contract.** The host returns the full
+   `{ "YYYY-MM-DD": n }` map; the client builds 3/6/12-month windows from it, so
+   a new range needs no host change (and the smoke test asserts the field).
 
 ## Structure
 
 ```
 lib/index.js          Host half: webServer routes + persistence (ESM)
-lib/client.js         Client half: ModuleLoader bundle (UI)
+lib/client.js         Client half: ModuleLoader bundle (fish + heatmap UI)
 cordis.patch.yml      Composition patch inserting the plugin row
-scripts/smoke.mjs     Host smoke test
-docs/                 PRD, UI design spec, preview, artwork
+scripts/smoke.mjs     Host smoke test (mock ctx, temp DSH_HOME)
+docs/                 PRD, UI design spec, heatmap preview, artwork, sample data
 ```
