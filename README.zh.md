@@ -23,7 +23,17 @@
 
 ## 📸 界面预览
 
-![UI 设计预览](docs/screenshots/ui-design-preview.png)
+<img src="assets/icon-512.png" width="88" align="right" alt="dsh-wooden-fish 图标">
+
+在 DeepSeek Harness 0.2.2-rc.5 上的实机截图：
+
+| 桌面悬浮木鱼 | 设置页 · 日历热力图 |
+| --- | --- |
+| <img src="assets/screenshots/floating-overlay.png" alt="悬浮在对话界面上的木鱼，悬停显示今日敲击次数"> | <img src="assets/screenshots/settings-heatmap.png" alt="设置页：今日/累计/连续天数卡片与近六个月热力图"> |
+
+敲击反馈——木槌挥动、涟漪、飘起的 `+1`：
+
+<img src="assets/screenshots/knock-feedback.png" width="420" alt="敲击反馈：木槌挥动、涟漪与 +1">
 
 交互演示：[docs/preview-heatmap.html](docs/preview-heatmap.html)（浏览器打开——可拖动、敲击木鱼、切换热力图范围）
 

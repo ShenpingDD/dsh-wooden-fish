@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here.
 
+## [2.0.1] — 2026-11-25
+
+Marketplace assets, plus a contrast fix the storefront screenshots surfaced.
+
+### Added
+
+- `assets/icon-512.png` / `assets/icon-180.png` — storefront tile drawn from the in-app mascot (wood fish on its stand, knock ripples), reads at 96 px.
+- `assets/screenshots/*.png` + `screenshots.json` — three real captures from DeepSeek Harness 0.2.2-rc.5: floating pet with the today tooltip, settings heatmap, and the knock feedback (`+1`, mallet swing, ripple). Storefronts read this file instead of guessing from the README.
+- README / README.zh: screenshot section.
+
+### Fixed
+
+- Settings page accent colors were invisible on dark themes: the selected range tab drew `--dsw-alias-brand-primary` (white in dark themes) as a background **and** `#fff` as text, and the stat numbers, today-cell outline and show/hide switch used the same token. All four now use the plugin's own wood amber via `--dsh-muyu-accent`, matching the design spec in both themes.
+
 ## [2.0.0] — 2026-11-24
 
 Renamed to **`dsh-wooden-fish`** (was `wooden-fish-dsh`) so both of my DSH plugins share one naming scheme (`dsh-4quadrant-todo`), and re-verified against DeepSeek Harness 0.2.2-rc.5.

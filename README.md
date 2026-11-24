@@ -23,7 +23,17 @@
 
 ## 📸 Preview
 
-![UI design preview](docs/screenshots/ui-design-preview.png)
+<img src="assets/icon-512.png" width="88" align="right" alt="dsh-wooden-fish icon">
+
+Real screenshots from DeepSeek Harness 0.2.2-rc.5:
+
+| Floating pet on the chat surface | Settings · calendar heatmap |
+| --- | --- |
+| <img src="assets/screenshots/floating-overlay.png" alt="Wooden fish floating over the chat surface, hover tooltip showing today's knocks"> | <img src="assets/screenshots/settings-heatmap.png" alt="Settings page: today / total / streak cards above a six-month heatmap"> |
+
+Knock feedback — mallet swing, ripple ring, floating `+1`:
+
+<img src="assets/screenshots/knock-feedback.png" width="420" alt="Knock feedback: mallet swing, ripple and +1 counter">
 
 Interactive demo: [docs/preview-heatmap.html](docs/preview-heatmap.html) (open in a browser — drag and knock the fish, switch the heatmap range)
 
