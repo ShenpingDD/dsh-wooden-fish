@@ -37,6 +37,25 @@ dsh plugin --profile web add --config.minimumReleaseAge=0 -w <path-to-this-repo>
 The profile links to this directory, so after editing `lib/*` you only need to
 restart DSH to pick up changes (client bundle rev changes; host code re-applies).
 
+## Releasing
+
+```bash
+npm run check
+npm version <major|minor|patch> --no-git-tag-version
+# add a CHANGELOG entry, commit, then:
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push origin main --tags
+npm pack                      # -> dsh-wooden-fish-X.Y.Z.tgz
+cp dsh-wooden-fish-X.Y.Z.tgz dsh-wooden-fish.tgz
+gh release create vX.Y.Z --notes-file <notes> \
+  dsh-wooden-fish-X.Y.Z.tgz dsh-wooden-fish.tgz
+```
+
+Keep the **version-free** asset name `dsh-wooden-fish.tgz` in every release: the
+README and the plugin-market entry both point at
+`releases/latest/download/dsh-wooden-fish.tgz`, so a versioned-only asset would
+404 the day the next release ships.
+
 ## Debugging
 
 - Host logs go to the DSH web process stdout (a `dsh-market-restart-*.out.log`

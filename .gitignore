@@ -3,3 +3,4 @@ node_modules/
 .DS_Store
 muyu-host-diag.json
 wooden-fish-data.json
+*.tgz

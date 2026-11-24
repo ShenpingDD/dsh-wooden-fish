@@ -29,17 +29,26 @@
 
 ## 📦 安装
 
-本插件是可直接安装的 **web profile bundle 包**。在 DeepSeek Harness 检出目录执行：
+本插件是可直接安装的 **web profile bundle 包**。
+
+推荐装预构建 tarball（无需构建授权、无构建步骤）：
 
 ```bash
-dsh plugin --profile web add --config.minimumReleaseAge=0 -w <本仓库路径>
+dsh plugin --profile web add https://github.com/ShenpingDD/dsh-wooden-fish/releases/latest/download/dsh-wooden-fish.tgz
 # 然后重启 dsh
 ```
 
-或直接从 GitHub 安装：
+或从源码安装（GitHub 源码安装需要一次 allowBuilds 授权）：
 
 ```bash
 dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:ShenpingDD/dsh-wooden-fish
+# 然后重启 dsh
+```
+
+也可以从本地检出目录安装：
+
+```bash
+dsh plugin --profile web add --config.minimumReleaseAge=0 -w <本仓库路径>
 # 然后重启 dsh
 ```
 

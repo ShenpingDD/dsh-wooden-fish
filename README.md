@@ -29,17 +29,26 @@ Interactive demo: [docs/preview-heatmap.html](docs/preview-heatmap.html) (open i
 
 ## 📦 Install
 
-The plugin is an installable **web-profile bundle** package. From the DeepSeek Harness checkout:
+The plugin is an installable **web-profile bundle** package.
+
+Install the prebuilt tarball — no build approval, no build step:
 
 ```bash
-dsh plugin --profile web add --config.minimumReleaseAge=0 -w <this-repo-path>
+dsh plugin --profile web add https://github.com/ShenpingDD/dsh-wooden-fish/releases/latest/download/dsh-wooden-fish.tgz
 # then restart dsh
 ```
 
-Or install directly from GitHub:
+Or install from source (GitHub-sourced installs need one `allowBuilds` approval):
 
 ```bash
 dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:ShenpingDD/dsh-wooden-fish
+# then restart dsh
+```
+
+Or from a local checkout:
+
+```bash
+dsh plugin --profile web add --config.minimumReleaseAge=0 -w <this-repo-path>
 # then restart dsh
 ```
 
