@@ -1,7 +1,15 @@
 {
-  "name": "wooden-fish-dsh",
+  "name": "dsh-wooden-fish",
+  "version": "2.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShenpingDD/dsh-wooden-fish.git"
+  },
+  "homepage": "https://github.com/ShenpingDD/dsh-wooden-fish#readme",
+  "bugs": {
+    "url": "https://github.com/ShenpingDD/dsh-wooden-fish/issues"
+  },
   "description": "🪵 电子木鱼桌宠 — A clickable wooden-fish desktop pet for the DeepSeek Harness web GUI. Click to knock, counts per day, trends in settings.",
-  "version": "1.1.0",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -34,6 +42,7 @@
     "README.md"
   ],
   "keywords": [
+    "dsh-plugin",
     "deepseek-harness",
     "dsh",
     "plugin",
@@ -41,5 +50,9 @@
     "desktop-pet",
     "muyu",
     "mindfulness"
-  ]
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+  }
 }

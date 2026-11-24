@@ -28,8 +28,8 @@ The package is a **bundle** in the web profile: `dsh.bundle.patch` points at
 
 ```yaml
 - insert:
-    - id: wooden-fish-dsh
-      name: wooden-fish-dsh
+    - id: dsh-wooden-fish
+      name: dsh-wooden-fish
 ```
 
 into the loader entry tree. The loader resolves the **host** face through the

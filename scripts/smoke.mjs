@@ -21,7 +21,7 @@ function check(label, cond) {
 }
 
 console.log('[1] 模块导出')
-check(`name === 'wooden-fish-dsh'`, name === 'wooden-fish-dsh')
+check(`name === 'dsh-wooden-fish'`, name === 'dsh-wooden-fish')
 check('inject 声明了 webServer', Array.isArray(inject) && inject.includes('webServer'))
 
 console.log('[2] apply + 路由注册')

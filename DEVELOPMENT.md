@@ -9,7 +9,7 @@
 
 ```bash
 git clone <repo-url>
-cd wooden-fish-dsh
+cd dsh-wooden-fish
 ```
 
 The package is plain JavaScript — **no build step**.

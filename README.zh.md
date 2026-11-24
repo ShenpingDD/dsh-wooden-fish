@@ -39,7 +39,7 @@ dsh plugin --profile web add --config.minimumReleaseAge=0 -w <本仓库路径>
 或直接从 GitHub 安装：
 
 ```bash
-dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:<owner>/wooden-fish-dsh
+dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:ShenpingDD/dsh-wooden-fish
 # 然后重启 dsh
 ```
 

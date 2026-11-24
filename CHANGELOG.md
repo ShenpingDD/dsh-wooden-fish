@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here.
 
+## [2.0.0] — 2026-11-24
+
+Renamed to **`dsh-wooden-fish`** (was `wooden-fish-dsh`) so both of my DSH plugins share one naming scheme (`dsh-4quadrant-todo`), and re-verified against DeepSeek Harness 0.2.2-rc.5.
+
+### Changed
+- **Package and repository renamed** `wooden-fish-dsh` → `dsh-wooden-fish`; the plugin entry id, client module id and the `cordis.patch.yml` row follow the new name. GitHub keeps redirecting the old URLs, but the install spec is now `github:ShenpingDD/dsh-wooden-fish`.
+- `package.json` now declares `repository` / `homepage` / `bugs`, `engines` (`node >=20`, `dsh >=0.2.2-rc.1 <0.3.0-0`) and the `dsh-plugin` / `dsh` keywords, so the plugin-market registry and npm probes can resolve the repo.
+
+### Unchanged on purpose
+- Data file stays `$DSH_HOME/wooden-fish-data.json` and routes stay `/muyu/*`, so existing counts and any local integration keep working across the rename (nothing to migrate).
+
 ## [1.1.0] — 2026-09-19
 
 DeepSeek Harness **0.1.5** compatibility + trend-chart redesign.

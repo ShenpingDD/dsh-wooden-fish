@@ -39,7 +39,7 @@ dsh plugin --profile web add --config.minimumReleaseAge=0 -w <this-repo-path>
 Or install directly from GitHub:
 
 ```bash
-dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:<owner>/wooden-fish-dsh
+dsh plugin --profile web add --config.minimumReleaseAge=0 -w github:ShenpingDD/dsh-wooden-fish
 # then restart dsh
 ```
 
